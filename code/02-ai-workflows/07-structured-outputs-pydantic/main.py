@@ -8,6 +8,20 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
+
+"""This script demonstrates how to use Structured Outputs with OpenAI's API to extract structured data from PDF invoices.
+
+Structured Outputs is an extremely useful feature that allows you to "force" LLMs to generate text that contains data in a certain shape / format.
+This is particularly useful when you want to extract specific information from unstructured text, such as invoices, contracts, or other documents.
+As shown in this course, OpenAI has official support - but, for example, Google also offers a similar feature.
+
+Those providers leverage a concept called "JSON Schema", which is a standardized way of describing the shape of JSON-formatted data.
+
+You can learn more about JSON schema in general here (https://json-schema.org/).
+
+Though, you should always consult the documentation of the AI provider you're using, since they don't necessarily support all JSON schema features. For example, you find an overview of the features supported by OpenAI here (https://platform.openai.com/docs/guides/structured-outputs?api-mode=responses#supported-schemas).
+"""
+
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -15,32 +29,24 @@ client = OpenAI()
 
 
 class Vendor(BaseModel):
-    name: str = Field(...,
-                      description="The name of the vendor or company issuing the invoice.")
+    name: str = Field(..., description="The name of the vendor or company issuing the invoice.")
     address: str = Field(..., description="The address of the vendor.")
-    taxId: str = Field(...,
-                       description="The tax identification number of the vendor.")
+    taxId: str = Field(..., description="The tax identification number of the vendor.")
 
 
 class Customer(BaseModel):
     name: str = Field(..., description="The name of the customer or client.")
     address: str = Field(..., description="The address of the customer.")
-    taxId: str = Field(...,
-                       description="The tax identification number of the customer.")
+    taxId: str = Field(...,  description="The tax identification number of the customer.")
 
 
 class Invoice(BaseModel):
-    vendor: Vendor = Field(...,
-                           description="Details of the vendor issuing the invoice.")
-    customer: Customer = Field(...,
-                               description="Details of the customer receiving the invoice.")
-    invoiceNumber: str = Field(...,
-                               description="Unique identifier for the invoice.")
+    vendor: Vendor = Field(..., description="Details of the vendor issuing the invoice.")
+    customer: Customer = Field(..., description="Details of the customer receiving the invoice.")
+    invoiceNumber: str = Field(...,  description="Unique identifier for the invoice.")
     date: str = Field(..., description="Date when the invoice was issued.")
-    totalAmount: float = Field(...,
-                               description="Total amount due on the invoice.")
-    tax: float = Field(...,
-                       description="Total tax amount applied to the invoice.")
+    totalAmount: float = Field(...,  description="Total amount due on the invoice.")
+    tax: float = Field(..., description="Total tax amount applied to the invoice.")
 
 
 def setup_database():
